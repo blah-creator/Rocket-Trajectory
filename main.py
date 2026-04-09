@@ -26,7 +26,7 @@ def main():
     best_altitude = -1
     best_rocket = None
 
-    population_size = 150
+    population_size = 250
 
     population = []
     for i in range(population_size):
@@ -40,7 +40,7 @@ def main():
         )
         population.append(rocket)
 
-    generations = 200
+    generations = 400
 
     for gen in range(generations):
         scores = []
@@ -52,7 +52,7 @@ def main():
                 + fin_area(rocket)
             )
 
-            altitude, time, height, vel, accel, thrust_curve, mass_list = (
+            altitude, time, height, vel, accel, thrust_curve, mass_list, x_position = (
                 simulate_flight(
                     rocket,
                     dry_rocket_mass,
@@ -80,6 +80,7 @@ def main():
                         accel,
                         thrust_curve,
                         mass_list,
+                        x_position,
                     )
                 scores.append((altitude, rocket))
 
@@ -89,7 +90,7 @@ def main():
 
         new_population = [elite]
 
-        while len(new_population) < population_size - 20:
+        while len(new_population) < population_size - 75:
             parent1 = random.choice(top)[1]
             parent2 = random.choice(top)[1]
 
@@ -110,8 +111,15 @@ def main():
     best_accel = best_rocket[8]
     best_thrust = best_rocket[9]
     best_mass_list = best_rocket[10]
+    best_x_position = best_rocket[11]
     plot_flight(
-        best_time, best_height, best_vel, best_accel, best_thrust, best_mass_list
+        best_time,
+        best_height,
+        best_vel,
+        best_accel,
+        best_thrust,
+        best_mass_list,
+        best_x_position,
     )
 
     results = {

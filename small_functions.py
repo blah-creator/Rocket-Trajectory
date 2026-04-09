@@ -56,17 +56,17 @@ def get_rho(h):
     return rho_h
 
 
-def get_parachute_drag(velocity, h):
+def get_parachute_drag(v_rel, h):
     rho = get_rho(h)
-    D = 0.5 * rho * parachute_cd * parachute_diameter * velocity * abs(velocity)
+    D = 0.5 * rho * parachute_cd * parachute_area * v_rel * abs(v_rel)
     return D
 
 
-def base_drag(velocity, diameter, h):
+def base_drag(v_rel, diameter, h):
     cd = 0.12
     rho = get_rho(h)
     area = cross_area(diameter)
-    base_D = 0.5 * rho * area * cd * velocity * abs(velocity)
+    base_D = 0.5 * rho * area * cd * v_rel * abs(v_rel)
     return base_D
 
 
@@ -106,25 +106,39 @@ def nc_area(rocket):
     return nc_a
 
 
-def drag_force(diameter, velocity, h):
-    cd = get_cd(velocity)
+def drag_force(diameter, v_rel, h):
+    cd = get_cd(v_rel)
     rho = get_rho(h)
-    D = rho * cd * cross_area(diameter) * (velocity * abs(velocity)) * 0.5
+    D = rho * cd * cross_area(diameter) * (v_rel * abs(v_rel)) * 0.5
     return D
 
 
-def drag_fin(tip_chord, root_chord, fin_height, velocity, h):
+def drag_fin(tip_chord, root_chord, fin_height, v_rel, h):
     rho = get_rho(h)
     D_fin = 3 * (
         rho
         * cd_fin
-        * (velocity * abs(velocity))
+        * (v_rel * abs(v_rel))
         * 0.5
         * (((tip_chord + root_chord) / 2) * fin_height)
     )
     return D_fin
 
 
-def acceleration(mass, D, T):
-    a = (T - D - (mass * g)) / mass
-    return a
+def acceleration(mass, D_y, D_x, T):
+    ay = (T - D_y - (mass * g)) / mass
+    ax = -D_x / mass
+    return ay, ax
+
+
+def get_2d_drag(v_rel, v_rel_x, v_rel_y, D_total):
+    if v_rel == 0:
+        D_x, D_y = 0, 0
+    else:
+        D_x = D_total * (
+            v_rel_x / v_rel
+        )  # Assuming drag is proportional to velocity components
+        D_y = D_total * (
+            v_rel_y / v_rel
+        )  # Assuming drag is proportional to velocity components
+    return D_x, D_y
