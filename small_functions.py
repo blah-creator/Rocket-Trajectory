@@ -125,13 +125,14 @@ def drag_fin(tip_chord, root_chord, fin_height, v_rel, h):
     return D_fin
 
 
-def acceleration(mass, D_y, D_x, T):
-    ay = (T - D_y - (mass * g)) / mass
+def acceleration(mass, D_y, D_x, T, D_z):
+    az = (T - D_z - (mass * g)) / mass
     ax = -D_x / mass
-    return ay, ax
+    ay = -D_y / mass
+    return az, ax, ay
 
 
-def get_2d_drag(v_rel, v_rel_x, v_rel_y, D_total):
+def get_3d_drag(v_rel, v_rel_x, v_rel_z, D_total, v_rel_y):
     if v_rel == 0:
         D_x, D_y = 0, 0
     else:
@@ -141,4 +142,5 @@ def get_2d_drag(v_rel, v_rel_x, v_rel_y, D_total):
         D_y = D_total * (
             v_rel_y / v_rel
         )  # Assuming drag is proportional to velocity components
-    return D_x, D_y
+        D_z = D_total * (v_rel_z / v_rel)
+    return D_x, D_z, D_y

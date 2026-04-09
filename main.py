@@ -6,6 +6,7 @@ from stability import calculate_cg, calculate_cp, stability_margin
 from rocketAPI import simulate_flight
 from plot_flight import plot_flight
 import pandas as pd
+from plot3dflight import plot_3d_trajectory
 
 g = 9.81
 thrust = 16
@@ -26,7 +27,7 @@ def main():
     best_altitude = -1
     best_rocket = None
 
-    population_size = 250
+    population_size = 100
 
     population = []
     for i in range(population_size):
@@ -40,7 +41,7 @@ def main():
         )
         population.append(rocket)
 
-    generations = 400
+    generations = 20
 
     for gen in range(generations):
         scores = []
@@ -52,14 +53,22 @@ def main():
                 + fin_area(rocket)
             )
 
-            altitude, time, height, vel, accel, thrust_curve, mass_list, x_position = (
-                simulate_flight(
-                    rocket,
-                    dry_rocket_mass,
-                    rocket.tip_chord,
-                    rocket.root_chord,
-                    rocket.fin_height,
-                )
+            (
+                altitude,
+                time,
+                height,
+                vel,
+                accel,
+                thrust_curve,
+                mass_list,
+                x_position,
+                y_position,
+            ) = simulate_flight(
+                rocket,
+                dry_rocket_mass,
+                rocket.tip_chord,
+                rocket.root_chord,
+                rocket.fin_height,
             )
 
             x_cg = calculate_cg(rocket)
@@ -81,6 +90,7 @@ def main():
                         thrust_curve,
                         mass_list,
                         x_position,
+                        y_position,
                     )
                 scores.append((altitude, rocket))
 
@@ -112,6 +122,7 @@ def main():
     best_thrust = best_rocket[9]
     best_mass_list = best_rocket[10]
     best_x_position = best_rocket[11]
+    best_y_position = best_rocket[12]
     plot_flight(
         best_time,
         best_height,
@@ -120,6 +131,13 @@ def main():
         best_thrust,
         best_mass_list,
         best_x_position,
+        best_y_position,
+    )
+
+    plot_3d_trajectory(
+        best_height,
+        best_x_position,
+        best_y_position,
     )
 
     results = {

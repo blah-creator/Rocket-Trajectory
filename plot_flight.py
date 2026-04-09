@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 
 
-def plot_flight(time, altitude, velocity, acceleration, thrust, mass, x_position):
+def plot_flight(
+    time, altitude, velocity, acceleration, thrust, mass, x_position, y_position
+):
     mass_grams = [x * 1000 for x in mass]
 
     plt.figure(figsize=(10, 5))
@@ -10,7 +12,8 @@ def plot_flight(time, altitude, velocity, acceleration, thrust, mass, x_position
     plt.plot(time, acceleration, label="Acceleration (m/s²)")
     plt.plot(time, thrust, label="Thrust (N)")
     plt.plot(time, mass_grams, label="Mass (g)")
-    plt.plot(time, x_position, label="Horizontal Position (m)")
+    plt.plot(time, x_position, label="X Position(E - W)(m)")
+    plt.plot(time, y_position, label="Y Position(N - S)(m)")
     plt.legend()
     plt.title("Rocket Trajectory")
     plt.xlabel("Time (s)")
