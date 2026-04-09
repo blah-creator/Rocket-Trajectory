@@ -21,3 +21,9 @@ def plot_flight(
     plt.savefig("rocket_trajectory.png")
     plt.grid()
     plt.show()
+
+    landing_x = x_position[-1]
+    landing_y = y_position[-1]
+    landing_time = time[-1]
+    print(f"Landing Position: {landing_x} m(+N, -S), {landing_y} m(+E, -W)")
+    print(f"Landing Time: {landing_time}")

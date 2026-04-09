@@ -8,6 +8,8 @@ from small_functions import (
     get_mass,
     get_parachute_drag,
     get_3d_drag,
+    get_wind,
+    get_directional_thrust,
 )
 
 """"
@@ -32,9 +34,7 @@ def simulate_flight(rocket, dry_rocket_mass, tip_chord, root_chord, fin_height):
     x_position = []
     y_position = []
     max_h = 0
-    ejection_delay = 6.0
-    wind_speed_x = 3  # m/s
-    wind_speed_y = 3
+    ejection_delay = 8.0
     vx = 0
     vz = 0
     vy = 0
@@ -44,10 +44,15 @@ def simulate_flight(rocket, dry_rocket_mass, tip_chord, root_chord, fin_height):
             T = 0
         else:
             T = get_thrust(t)
-            # T = 16
+            thrust_dir = get_directional_thrust(vx, vy, vz)
+            T_x = T * thrust_dir[0]
+            T_y = T * thrust_dir[1]
+            T_z = T * thrust_dir[2]
 
         mass = get_mass(t) + dry_rocket_mass
         mass_list.append(mass)
+
+        wind_speed_x, wind_speed_y = get_wind(h)
 
         v_rel_x = vx - wind_speed_x
         v_rel_y = vy - wind_speed_y
@@ -66,7 +71,7 @@ def simulate_flight(rocket, dry_rocket_mass, tip_chord, root_chord, fin_height):
             fin_drag = drag_fin(tip_chord, root_chord, fin_height, v_rel, h)
             total_drag = base_D + drag_f + fin_drag
         D_x, D_z, D_y = get_3d_drag(v_rel, v_rel_x, v_rel_z, total_drag, v_rel_y)
-        az, ax, ay = acceleration(mass, D_y, D_x, T, D_z)
+        az, ax, ay = acceleration(mass, D_y, D_x, D_z, T_x, T_y, T_z)
 
         vz += az * dt
         vx += ax * dt

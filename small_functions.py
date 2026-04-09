@@ -20,6 +20,8 @@ initial_mass = dry_mass + fuel_mass
 parachute_cd = 1.5
 parachute_diameter = 0.3
 parachute_area = np.pi * (parachute_diameter / 2) ** 2
+wind_speed_x = 3
+wind_speed_y = 3
 
 thrust_time = np.array([0.0, 0.1, 0.2, 0.5, 1.0, 1.5, 2.0, 2.09])
 thrust_values = np.array([4.5, 10.0, 15.0, 16.0, 18.0, 16.0, 10.0, 0.0])
@@ -125,11 +127,17 @@ def drag_fin(tip_chord, root_chord, fin_height, v_rel, h):
     return D_fin
 
 
-def acceleration(mass, D_y, D_x, T, D_z):
-    az = (T - D_z - (mass * g)) / mass
-    ax = -D_x / mass
-    ay = -D_y / mass
+def acceleration(mass, D_y, D_x, D_z, T_x, T_y, T_z):
+    az = (T_z - D_z - (mass * g)) / mass
+    ax = (T_x - D_x) / mass
+    ay = (T_y - D_y) / mass
     return az, ax, ay
+
+
+def get_wind(h):
+    wind_force_x = wind_speed_x + 0.002 * h
+    wind_force_y = wind_speed_y + 0.002 * h
+    return wind_force_x, wind_force_y
 
 
 def get_3d_drag(v_rel, v_rel_x, v_rel_z, D_total, v_rel_y):
@@ -144,3 +152,12 @@ def get_3d_drag(v_rel, v_rel_x, v_rel_z, D_total, v_rel_y):
         )  # Assuming drag is proportional to velocity components
         D_z = D_total * (v_rel_z / v_rel)
     return D_x, D_z, D_y
+
+
+def get_directional_thrust(vx, vy, vz):
+    v_mag = np.sqrt(vx**2 + vy**2 + vz**2)
+    if v_mag == 0:
+        thrust_dir = np.array([0, 0, 1])
+    else:
+        thrust_dir = np.array([vx, vy, vz]) / v_mag
+    return thrust_dir

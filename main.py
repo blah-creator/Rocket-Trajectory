@@ -138,6 +138,7 @@ def main():
         best_height,
         best_x_position,
         best_y_position,
+        best_time,
     )
 
     results = {
