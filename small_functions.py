@@ -85,8 +85,22 @@ def fin_area(rocket):
     return fin_a
 
 
+def single_flight_fin_area(rocket_tip_chord, rocket_root_chord, rocket_fin_height):
+    fin_a = 3 * (
+        ((rocket_tip_chord + rocket_root_chord) / 2) * rocket_fin_height * fin_thickness
+    )
+    return fin_a
+
+
 def engine_mount_area(rocket):
     engine_mount_a = ((((rocket.diameter / 2) ** 2) * np.pi) * engine_length) - (
+        ((engine_width / 2) ** 2) * np.pi
+    ) * engine_length
+    return engine_mount_a
+
+
+def single_flight_engine_mount_area(rocket_diameter):
+    engine_mount_a = ((((rocket_diameter / 2) ** 2) * np.pi) * engine_length) - (
         ((engine_width / 2) ** 2) * np.pi
     ) * engine_length
     return engine_mount_a
@@ -103,8 +117,24 @@ def body_area_not_engine(rocket):
     return body_area
 
 
+def single_flight_body_area_not_engine(rocket_diameter, rocket_length):
+    body_area = (
+        (rocket_diameter / 2) ** 2 * np.pi * (rocket_length - engine_length)
+    ) - (
+        ((rocket_diameter - edge_thick) / 2) ** 2
+        * np.pi
+        * (rocket_length - engine_length)
+    )
+    return body_area
+
+
 def nc_area(rocket):
     nc_a = (1 / 3) * (rocket.diameter / 2) ** 2 * np.pi * rocket.nc_length
+    return nc_a
+
+
+def single_flight_nc_area(rocket_diameter, rocket_nc_length):
+    nc_a = (1 / 3) * (rocket_diameter / 2) ** 2 * np.pi * rocket_nc_length
     return nc_a
 
 
@@ -142,7 +172,7 @@ def get_wind(h):
 
 def get_3d_drag(v_rel, v_rel_x, v_rel_z, D_total, v_rel_y):
     if v_rel == 0:
-        D_x, D_y = 0, 0
+        D_x, D_y, D_z = 0, 0, 0
     else:
         D_x = D_total * (
             v_rel_x / v_rel

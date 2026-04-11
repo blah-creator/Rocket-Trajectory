@@ -42,6 +42,9 @@ def simulate_flight(rocket, dry_rocket_mass, tip_chord, root_chord, fin_height):
     while h >= 0 or vz > 0:
         if t > burn_time:
             T = 0
+            T_x = 0
+            T_y = 0
+            T_z = 0
         else:
             T = get_thrust(t)
             thrust_dir = get_directional_thrust(vx, vy, vz)
